@@ -10,7 +10,12 @@ namespace HelloCSharpWorld
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello CSharp World");
+            Console.Write("Vize Notu:");
+            double midterm = Double.Parse(Console.ReadLine());
+            Console.Write("Final Notu:");
+            double final = Double.Parse(Console.ReadLine());
+            double average = midterm * 0.4 + final * 0.6;
+            Console.WriteLine(average);
             Console.ReadLine();
         }
     }
