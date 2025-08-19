@@ -10,67 +10,53 @@ namespace HelloCSharpWorld
 {
     internal class Program
     {
-        static void LogExecution(string funcName)
+        static void Ebob(ref int ebobXY, int x, int y)
         {
-            Console.WriteLine($"{funcName} fonksiyonu başladı.");
-        }
-
-        static void ShowTheBigger(byte theBigOne, byte theSmallOne)
-        {
-            LogExecution("ShowTheBigger");
-            Console.WriteLine("{0} sayısı {1} sayısından büyüktür", theBigOne, theSmallOne);
-        }
-        static void WhoIsBigger(byte alphaValue, byte omegaValue)
-        {
-            LogExecution("WhoIsBigger");
-            if(alphaValue > omegaValue)
+            int asalcarpan = 2;
+            while(x!=1 && y!=1)
             {
-                ShowTheBigger(alphaValue, omegaValue);
+                if(x % asalcarpan == 0 && y % asalcarpan == 0) 
+                {
+                    x = x / asalcarpan; //sayıyı asal çarpana böldüm
+                    y = y / asalcarpan; //sayıyı asal çarpana böldüm
+                    ebobXY = ebobXY * asalcarpan; // Her iki sayıyı da böldüğü çarpıma dahil ettim
+                }
+                else if(x % asalcarpan != 0 && y % asalcarpan == 0)
+                {
+                    y = y / asalcarpan; // Sadece bu sayı bölünüyorsa böldüm
+                }
+                else if (x % asalcarpan == 0 && y % asalcarpan != 0)
+                {
+                    x = x / asalcarpan; // Sadece bu sayı bölünüyorsa böldüm
+                }
+                else // Her iki sayı da tam bölünmüyorsa bir sonraki asal çarpana geçilecek
+                {
+                    bool asalSayi = false; // Durum olumsuz!
+                    do
+                    {
+                        asalcarpan++; // Asal çarpanı bir artırdım yeni değer asal olmayabilir.
+                        for(int i = 2; i < asalcarpan; i++) // Döngü başlattım
+                        {
+                            if (asalcarpan % i == 0) break; // 1 veya kendisi haricindeki bir sayıya tam bölünmemeli
+                            else asalSayi = true; // Durum olumlu
+                        }
+                        if (asalSayi) break; // Döngüden çıktım.
+                    } while(true);
+                }
             }
-            else if(omegaValue > alphaValue)
-            {
-                ShowTheBigger(omegaValue, alphaValue);
-            }
-            else
-            {
-                Console.WriteLine("İki sayı eşit!");
-            }
-        }
-        static void CheckUserInput(byte alphaValue, byte omegaValue)
-        {
-            LogExecution("CheckUserInput");
-            Console.WriteLine("Kullanıcının girdiği 1. sayı -> {0} ve 2. sayı -> {1}",alphaValue,omegaValue);
-        }
-        static (byte alphaValue, byte omegaValue)? GetNumbersFromUser()
-        {
-            LogExecution("GetNumbersFromUser");
-            Console.Write("Karşılaştırma yapmak için 1. sayıyı giriniz...");
-            //byte alphaValue = byte.Parse(Console.ReadLine());
-            bool isValidAlpha = byte.TryParse(Console.ReadLine(), out byte alphaValue);
-            if (!isValidAlpha)
-            {
-                Console.WriteLine("Geçerli bir sayı girmediniz!");
-                return null;
-            }
-            Console.Write("Karşılaştırma yapmak için 2. sayıyı giriniz...");
-            //byte omegaValue = byte.Parse(Console.ReadLine());
-            bool isValidOmega = byte.TryParse(Console.ReadLine(), out byte omegaValue);
-            if (!isValidOmega)
-            {
-                Console.WriteLine("Geçerli bir sayı girmediniz!");
-                return null;
-            }
-            return (alphaValue, omegaValue);
         }
         static void Main(string[] args)
         {
-            //var (alphaValue, omegaValue) = GetNumbersFromUser();
-            var numbers = GetNumbersFromUser();
-            if (numbers == null) return; 
-            var (alphaValue, omegaValue) = numbers.Value;
-            CheckUserInput(alphaValue, omegaValue);
-            WhoIsBigger (alphaValue, omegaValue);
+            Console.Title = "Ebob";
+            int ebob = 1;
+            Console.Write("Birinci Sayı:");
+            int bS = Int32.Parse(Console.ReadLine());
+            Console.Write("İkinci Sayı:");
+            int iS = Int32.Parse(Console.ReadLine());
+            Ebob(ref ebob, bS, iS);
+            Console.WriteLine("Girilen {0} ve {1} Sayılarının Ebobu: {2}",bS,iS,ebob);
             Console.ReadLine();
         }
+            
     }
 }
