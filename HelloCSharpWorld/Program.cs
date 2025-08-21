@@ -95,11 +95,23 @@ namespace HelloCSharpWorld
     {
         public void PrintSeparator()
         {
-            // Doldurulacak
+            Console.WriteLine("=========================================");
         }
         public void PrintIntroMessage()
         {
-            // Doldurulacak
+            Console.Clear();
+            PrintSeparator();
+            Console.WriteLine("GCD Calculator");
+            PrintSeparator();
+            Console.WriteLine("Welcome! This tool helps you find the\n" +
+                "Greatest Common Divisor (GCD) of numbers.\n\n" +
+                "Available Calculation Techniques:\n" +
+                " 1) Prime Factorization \n" +
+                " 2) Euclidean Algorithm ");
+            PrintSeparator();
+            Console.WriteLine("Tip: Choose wisely — both roads lead\n" +
+                "to the GCD, but with different styles!");
+            PrintSeparator();
         }
     }
     // Asal çarpanlarla EBOB hesaplayan sınıf
@@ -183,7 +195,9 @@ namespace HelloCSharpWorld
     {
         static void Main(string[] args)
         {
-            // Main
+            IOutputHandler output = new ConsoleOutputHandler();
+            output.PrintIntroMessage();
+            Console.ReadLine();
         }
     }
 }
