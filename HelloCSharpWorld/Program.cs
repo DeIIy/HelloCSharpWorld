@@ -88,7 +88,35 @@ namespace HelloCSharpWorld
     public class ConsoleInputHandler : IInputHandler
     {
         // Kullanıcı girdi fonksiyonu
-        public int GetInteger(string message) { return 0; }
+        public int GetInteger(string message)
+        {
+            while (true)
+            {
+                Console.WriteLine(message);
+                var input = Console.ReadLine();
+                try
+                {
+                    if (input is null) throw new ArgumentException(nameof(input));
+                    return int.Parse(input, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Invalid number, please try again.");
+                }
+                catch (OverflowException)
+                {
+                    Console.WriteLine("Value out of range, enter a smaller or larger number.");
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Input was empty, please enter a number.");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("An unexpected error occurred, please try again.");
+                }
+            }
+        }
     }
     //Kullanıcı output sınıfı
     public class ConsoleOutputHandler : IOutputHandler
@@ -196,7 +224,12 @@ namespace HelloCSharpWorld
         static void Main(string[] args)
         {
             IOutputHandler output = new ConsoleOutputHandler();
+            IInputHandler input = new ConsoleInputHandler();
+
             output.PrintIntroMessage();
+
+            var x = input.GetInteger("Enter the first number to calculate the GCD...");
+            var y = input.GetInteger("Enter the second number to calculate the GCD...");
             Console.ReadLine();
         }
     }
