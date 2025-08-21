@@ -7,117 +7,183 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace HelloCSharpWorld
+
 {
-    public static class InputHandler
+    // ------------------------------
+    // DOMAIN BÖLÜMÜ
+    // ------------------------------
+    public class GcdStep
     {
-        public static int IntInputHandler(string userNotice)
+        public int StepNumber { get; set; }
+        public int XBefore { get; set; }
+        public int YBefore { get; set; }
+        public string Operation { get; set; } = string.Empty;
+        public int? TestedDivisor { get; set; }
+        public bool? IsCommonFactor { get; set; }
+        public int XAfter { get; set; }
+        public int YAfter { get; set; }
+        public int? Remainder { get; set; }
+    }
+
+    public class GcdResult
+    {
+        public int InputX { get; set; }
+        public int InputY { get; set; }
+        public string AlgorithmName { get; set; } = string.Empty;
+        public List<GcdStep> Steps { get; set; }
+    }
+        
+    // ------------------------------
+    // ARAYÜZ BÖLÜMÜ
+    // ------------------------------
+
+    // Kullanıcı girdi arayüzü
+    public interface IInputHandler
+    {
+        // EBOB için tam sayı girdileri alır
+        int GetInteger(string message);
+    }
+
+    public interface IOutputHandler
+    {
+        void PrintSeparator();
+        void PrintIntroMessage();
+    }
+
+    // EBOB hesaplama arayüzü
+    public interface IGCDCalculator
+    {
+        // Seçimi hatırlatan değişken
+        string Name { get; }
+        //EBOB hesaplayıcı fonksiyon
+        int CalculateGCD(int x, int y);
+        // Log fonksiyonu
+        List<GcdStep> GetCalculateSteps(int x, int y);
+    }
+    // Tabloyu Konsola basan arayüz
+    public interface ITablePrinter
+    {
+        void Print(List<GcdStep> steps, int gcd, string algorithmName, int x, int y);
+    }
+    //
+    public interface IPrimeProvider
+    {
+        bool IsPrime(int n);
+        int GetNextPrime(int currentPrime);
+    }
+
+    //
+    public interface IValidator
+    {
+        void EnsureValidInputs(int x, int y);
+    }
+
+
+
+    // ------------------------------
+    // SINIF BÖLÜMÜ
+    // ------------------------------
+
+    // Kullanıcı input sınıfı
+    public class ConsoleInputHandler : IInputHandler
+    {
+        // Kullanıcı girdi fonksiyonu
+        public int GetInteger(string message) { return 0; }
+    }
+    //Kullanıcı output sınıfı
+    public class ConsoleOutputHandler : IOutputHandler
+    {
+        public void PrintSeparator()
         {
-            int value;
-            while (true)
-            {
-                Console.Write(userNotice);
-                try
-                {
-                    value = Int32.Parse(Console.ReadLine());
-                    break;
-                }
-                catch (FormatException)
-                {
-                    Console.WriteLine("Lütfen sadece sayısal bir değer giriniz.");
-                }
-                catch (OverflowException)
-                {
-                    Console.WriteLine("Girdiğiniz sayı çok büyük veya küçük. Lütfen geçerli bir aralıkta sayı giriniz.");
-                }
-                catch (ArgumentNullException)
-                {
-                    Console.WriteLine("Herhangi bir giriş yapılmadı. Lütfen tekrar deneyiniz.");
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Beklenmeyen bir hata oluştu. Lütfen tekrar deneyiniz.");
-                }
-            }
-            return value;
+            // Doldurulacak
+        }
+        public void PrintIntroMessage()
+        {
+            // Doldurulacak
+        }
+    }
+    // Asal çarpanlarla EBOB hesaplayan sınıf
+    public class PrimeFactorizationGCDCalculator : IGCDCalculator
+    {
+        // Seçimi hatırlatan değişken
+        public string Name = "Prime Factorization GCD Calculator";
+
+        string IGCDCalculator.Name => throw new NotImplementedException();
+
+        // Asal çarpanlarla EBOB hesaplayan fonksiyon
+        public int CalculateGCD(int x, int y) { return 0; }
+
+        public List<GcdStep> GetCalculateSteps(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
+
+        // Log fonksiyonu
+        public List<GcdStep> GetCalculationSteps(int x, int y) { return new List<GcdStep>(); }
+    }
+    // Öklidle EBOB hesaplayan sınıf
+    public class EuclideanModuloGCDCalculator : IGCDCalculator
+    {
+        // Seçimi hatırlatan değişken
+        public string Name = "Euclidean Modulo GCD Calculator";
+        string IGCDCalculator.Name => throw new NotImplementedException();
+
+        // Öklidle EBOB hesaplayan sınıf
+        public int CalculateGCD(int x, int y) { return 0; }
+
+        public List<GcdStep> GetCalculateSteps(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
+
+        //Log fonksiyonu
+        public List<GcdStep> GetCalculationSteps() { return new List<GcdStep>(); }
+    }
+    // Tabloyu Konsola basan sınıf
+    public class ConsoleTablePrinter : ITablePrinter
+    {
+        public void Print(List<GcdStep> steps, int gcd, string algorithmName, int x, int y)
+        {
+            //Print fonksiyonu doldurulacak
         }
     }
 
+    //
+    public class SimplePrimeProvider : IPrimeProvider
+    {
+        bool IsPrime(int n) { return false; }
+        int GetNextPrime(int currentPrime) { return 0; }
+
+        bool IPrimeProvider.IsPrime(int n)
+        {
+            return IsPrime(n);
+        }
+
+        int IPrimeProvider.GetNextPrime(int currentPrime)
+        {
+            return GetNextPrime(currentPrime);
+        }
+    }
+
+    //
+    public class BasicInputValidator : IValidator
+    {
+        void EnsureValidInputs(int x, int y) { }
+
+        void IValidator.EnsureValidInputs(int x, int y)
+        {
+            EnsureValidInputs(x, y);
+        }
+    }
+
+    // ------------------------------
+    // MAIN BÖLÜMÜ
+    // ------------------------------
     internal class Program
     {
-        static bool IsPrime(int number)
-        {
-            if (number < 2) return false;
-            int sqrt = (int)Math.Sqrt(number);
-            for (int i = 2; i <= sqrt; i++)
-            {
-                if (number % i == 0) return false;
-            }
-            return true;
-        }
-
-        static int GetNextPrime(int currentPrime)
-        {
-            do
-            {
-                currentPrime++;
-            } while (!IsPrime(currentPrime));
-            return currentPrime;
-        }
-
-        static (int gcdResult, int firstValue, int secondValue) DivideIfDivisible(
-            int gcdResult, int factorCandidate, int firstValue, int secondValue)
-        {
-            if (firstValue % factorCandidate == 0 && secondValue % factorCandidate == 0)
-            {
-                gcdResult *= factorCandidate;
-
-                firstValue /= factorCandidate;
-                secondValue /= factorCandidate;
-            }
-            else if (firstValue % factorCandidate == 0)
-            {
-                firstValue /= factorCandidate;
-            }
-            else if (secondValue % factorCandidate == 0)
-            {
-                secondValue /= factorCandidate;
-            }
-
-            return (gcdResult, firstValue, secondValue);
-        }
-
-        static int CalculateGCD(int gcdResult, int firstValue, int secondValue)
-        {
-            int factorCandidate = 2;
-            while (firstValue != 1 && secondValue != 1)
-            {
-                if (firstValue % factorCandidate == 0 || secondValue % factorCandidate == 0)
-                {
-                    var result = DivideIfDivisible(gcdResult, factorCandidate, firstValue, secondValue);
-                    gcdResult = result.gcdResult;
-                    firstValue = result.firstValue;
-                    secondValue = result.secondValue;
-                }
-                else
-                {
-                    factorCandidate = GetNextPrime(factorCandidate);
-                }
-            }
-            return gcdResult;
-        }
-
-        static (int firstValue, int secondValue) GetNumberForGCD()
-        {
-            int firstValue = InputHandler.IntInputHandler("EBOB hesaplaması yapılacak ilk sayıyı giriniz: ");
-            int secondValue = InputHandler.IntInputHandler("EBOB hesaplaması yapılacak ikinci sayıyı giriniz: ");
-            return (firstValue, secondValue);
-        }
-
         static void Main(string[] args)
-        {;
-            var (firstValue, secondValue) = GetNumberForGCD();
-            int gcdResult = CalculateGCD(1, firstValue, secondValue);
-            Console.WriteLine($"EBOB({firstValue}, {secondValue}) = {gcdResult}");
+        {
+            // Main
         }
     }
 }
