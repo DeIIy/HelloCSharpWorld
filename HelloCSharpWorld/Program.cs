@@ -42,6 +42,7 @@ namespace HelloCSharpWorld
     {
         // EBOB için tam sayı girdileri alır
         int GetInteger(string message);
+        string GetChoice(string message, params string[] allowedChoices);
     }
 
     public interface IOutputHandler
@@ -115,6 +116,17 @@ namespace HelloCSharpWorld
                 {
                     Console.WriteLine("An unexpected error occurred, please try again.");
                 }
+            }
+        }
+        public string GetChoice(string message, params string[] allowedChoices)
+        {
+            var allowed = new HashSet<string>(allowedChoices, StringComparer.OrdinalIgnoreCase);
+            while (true)
+            {
+                Console.WriteLine(message);
+                var input = Console.ReadLine();
+                if (!string.IsNullOrEmpty(input) && allowed.Contains(input.Trim())) return input.Trim();
+                Console.WriteLine($"Invalid choice. Options: {string.Join(", ", allowedChoices)}");
             }
         }
     }
@@ -227,6 +239,7 @@ namespace HelloCSharpWorld
             IInputHandler input = new ConsoleInputHandler();
 
             output.PrintIntroMessage();
+            var choice = input.GetChoice("Which option would you like to use (1/2): ", "1", "2");
 
             var x = input.GetInteger("Enter the first number to calculate the GCD...");
             var y = input.GetInteger("Enter the second number to calculate the GCD...");
