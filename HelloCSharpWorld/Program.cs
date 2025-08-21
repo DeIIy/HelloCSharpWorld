@@ -10,7 +10,7 @@ namespace HelloCSharpWorld
 
 {
     // ------------------------------
-    // DOMAIN BÖLÜMÜ
+    // DOMAIN LAYER - DOMAIN BÖLÜMÜ
     // ------------------------------
     public class GcdStep
     {
@@ -32,15 +32,15 @@ namespace HelloCSharpWorld
         public string AlgorithmName { get; set; } = string.Empty;
         public List<GcdStep> Steps { get; set; }
     }
-        
+
     // ------------------------------
-    // ARAYÜZ BÖLÜMÜ
+    // INTERFACE LAYER - ARAYÜZ BÖLÜMÜ
     // ------------------------------
 
-    // Kullanıcı girdi arayüzü
+    // User Input Interface - Kullanıcı girdi arayüzü
     public interface IInputHandler
     {
-        // EBOB için tam sayı girdileri alır
+        // Takes integer inputs for GCD - EBOB için tam sayı girdileri alır
         int GetInteger(string message);
         string GetChoice(string message, params string[] allowedChoices);
     }
@@ -51,17 +51,17 @@ namespace HelloCSharpWorld
         void PrintIntroMessage();
     }
 
-    // EBOB hesaplama arayüzü
+    // GCD Calculation Interface - EBOB hesaplama arayüzü
     public interface IGCDCalculator
     {
-        // Seçimi hatırlatan değişken
+        // Variable holding selection name - Seçimin adını tutan değişken
         string Name { get; }
-        //EBOB hesaplayıcı fonksiyon
+        // GCD Calculator Function - EBOB hesaplayıcı fonksiyon
         int CalculateGCD(int x, int y);
-        // Log fonksiyonu
+        // Logger - Kayıt fonksiyonu
         List<GcdStep> GetCalculateSteps(int x, int y);
     }
-    // Tabloyu Konsola basan arayüz
+    // Console Table Output - Tabloyu Konsola basan arayüz
     public interface ITablePrinter
     {
         void Print(List<GcdStep> steps, int gcd, string algorithmName, int x, int y);
@@ -82,13 +82,13 @@ namespace HelloCSharpWorld
 
 
     // ------------------------------
-    // SINIF BÖLÜMÜ
+    // CLASS LAYER - SINIF BÖLÜMÜ
     // ------------------------------
 
-    // Kullanıcı input sınıfı
+    // User Input Class - Kullanıcı girdi sınıfı
     public class ConsoleInputHandler : IInputHandler
     {
-        // Kullanıcı girdi fonksiyonu
+        // User Input Function - Kullanıcı girdi fonksiyonu
         public int GetInteger(string message)
         {
             while (true)
@@ -102,19 +102,19 @@ namespace HelloCSharpWorld
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Invalid number, please try again.");
+                    Console.WriteLine("Invalid number, please try again."); // Geçersiz sayı, lütfen tekrar deneyin.
                 }
                 catch (OverflowException)
                 {
-                    Console.WriteLine("Value out of range, enter a smaller or larger number.");
+                    Console.WriteLine("Value out of range, enter a smaller or larger number."); // Değer aralık dışında, lütfen daha küçük veya daha büyük bir sayı girin.
                 }
                 catch (ArgumentException)
                 {
-                    Console.WriteLine("Input was empty, please enter a number.");
+                    Console.WriteLine("Input was empty, please enter a number."); // Girdi boş, lütfen bir sayı girin.
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("An unexpected error occurred, please try again.");
+                    Console.WriteLine("An unexpected error occurred, please try again."); // Beklenmeyen bir hata oluştu, lütfen tekrar deneyin.
                 }
             }
         }
@@ -126,11 +126,11 @@ namespace HelloCSharpWorld
                 Console.WriteLine(message);
                 var input = Console.ReadLine();
                 if (!string.IsNullOrEmpty(input) && allowed.Contains(input.Trim())) return input.Trim();
-                Console.WriteLine($"Invalid choice. Options: {string.Join(", ", allowedChoices)}");
+                Console.WriteLine($"Invalid choice. Options: {string.Join(", ", allowedChoices)}"); // Geçersiz seçim. Seçenekler: 1, 2
             }
         }
     }
-    //Kullanıcı output sınıfı
+    // User Output Class - Kullanıcı çıktı sınıfı
     public class ConsoleOutputHandler : IOutputHandler
     {
         public void PrintSeparator()
@@ -152,17 +152,32 @@ namespace HelloCSharpWorld
             Console.WriteLine("Tip: Choose wisely — both roads lead\n" +
                 "to the GCD, but with different styles!");
             PrintSeparator();
+            /*
+             =========================================
+             EBOB Hesaplayıcı
+             =========================================
+             Hoş geldiniz! Bu araç, sayıların
+             En Büyük Ortak Bölenini (EBOB) bulmanıza yardımcı olur.
+
+            Mevcut Hesaplama Yöntemleri:
+            1) Asal Çarpanlara Ayırma
+            2) Öklid Algoritması
+            =========================================
+            İpucu: Seçiminizi dikkatli yapın — her iki yol da
+                         EBOB’a ulaşır, ama farklı tarzlarda!
+            =========================================
+             */
         }
     }
-    // Asal çarpanlarla EBOB hesaplayan sınıf
+    // Prime Factor GCD Class - Asal çarpanlarla EBOB hesaplayan sınıf
     public class PrimeFactorizationGCDCalculator : IGCDCalculator
     {
-        // Seçimi hatırlatan değişken
+        // Variable holding selection name - Seçimin adını tutan değişken
         public string Name = "Prime Factorization GCD Calculator";
 
         string IGCDCalculator.Name => throw new NotImplementedException();
 
-        // Asal çarpanlarla EBOB hesaplayan fonksiyon
+        // GCD by Prime Factors Function - Asal çarpanlarla EBOB hesaplayan fonksiyon
         public int CalculateGCD(int x, int y) { return 0; }
 
         public List<GcdStep> GetCalculateSteps(int x, int y)
@@ -170,17 +185,17 @@ namespace HelloCSharpWorld
             throw new NotImplementedException();
         }
 
-        // Log fonksiyonu
+        // Logger - Kayıt fonksiyonu
         public List<GcdStep> GetCalculationSteps(int x, int y) { return new List<GcdStep>(); }
     }
-    // Öklidle EBOB hesaplayan sınıf
+    // Euclidean GCD Class - Öklidle EBOB hesaplayan sınıf
     public class EuclideanModuloGCDCalculator : IGCDCalculator
     {
-        // Seçimi hatırlatan değişken
+        // Variable holding selection name - Seçimin adını tutan değişken
         public string Name = "Euclidean Modulo GCD Calculator";
         string IGCDCalculator.Name => throw new NotImplementedException();
 
-        // Öklidle EBOB hesaplayan sınıf
+        // GCD by Euclidean Function - Öklidle EBOB hesaplayan fonksiyon
         public int CalculateGCD(int x, int y) { return 0; }
 
         public List<GcdStep> GetCalculateSteps(int x, int y)
@@ -188,19 +203,19 @@ namespace HelloCSharpWorld
             throw new NotImplementedException();
         }
 
-        //Log fonksiyonu
+        // Logger - Kayıt fonksiyonu
         public List<GcdStep> GetCalculationSteps() { return new List<GcdStep>(); }
     }
-    // Tabloyu Konsola basan sınıf
+    // Console Table Printer Class - Tabloyu Konsola basan sınıf
     public class ConsoleTablePrinter : ITablePrinter
     {
         public void Print(List<GcdStep> steps, int gcd, string algorithmName, int x, int y)
         {
-            //Print fonksiyonu doldurulacak
+            // Print function to be implemented - Print fonksiyonu doldurulacak
         }
     }
 
-    //
+    // Simple Operations Function - Basit işlemler fonksiyonu
     public class SimplePrimeProvider : IPrimeProvider
     {
         bool IsPrime(int n) { return false; }
@@ -217,7 +232,7 @@ namespace HelloCSharpWorld
         }
     }
 
-    //
+    // Validate Inputs Function - Girdileri doğrulama fonksiyonu
     public class BasicInputValidator : IValidator
     {
         void EnsureValidInputs(int x, int y) { }
@@ -229,7 +244,7 @@ namespace HelloCSharpWorld
     }
 
     // ------------------------------
-    // MAIN BÖLÜMÜ
+    // MAIN LAYER - ANA BÖLÜM
     // ------------------------------
     internal class Program
     {
@@ -239,10 +254,10 @@ namespace HelloCSharpWorld
             IInputHandler input = new ConsoleInputHandler();
 
             output.PrintIntroMessage();
-            var choice = input.GetChoice("Which option would you like to use (1/2): ", "1", "2");
+            var choice = input.GetChoice("Which option would you like to use (1/2): ", "1", "2"); // Hangi seçeneği kullanmak istersiniz (1/2):
 
-            var x = input.GetInteger("Enter the first number to calculate the GCD...");
-            var y = input.GetInteger("Enter the second number to calculate the GCD...");
+            var x = input.GetInteger("Enter the first number to calculate the GCD..."); // EBOB hesaplamak için ilk sayıyı girin...
+            var y = input.GetInteger("Enter the second number to calculate the GCD..."); // EBOB hesaplamak için ikinci sayıyı girin...
             Console.ReadLine();
         }
     }
