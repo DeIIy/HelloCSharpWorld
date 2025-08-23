@@ -206,17 +206,26 @@ namespace HelloCSharpWorld
     // Simple Operations Function - Basit işlemler fonksiyonu
     public class SimplePrimeProvider : IPrimeProvider
     {
-        bool IsPrime(int n) { return false; }
-        int GetNextPrime(int currentPrime) { return 0; }
-
-        bool IPrimeProvider.IsPrime(int n)
+        // Checks if number is prime - Asallık durumunu kontrol eder
+        public bool IsPrime(int candidatePrime)
         {
-            return IsPrime(n);
+            if (candidatePrime < 2) return false;
+            for (int i = 2; i < candidatePrime; i++)
+            {
+                if (candidatePrime % i == 0) return false;
+            }
+            return true;
         }
-
-        int IPrimeProvider.GetNextPrime(int currentPrime)
+        // Finds the next prime number - Sonraki asal sayıyı bulur
+        public int GetNextPrime(int currentPrime)
         {
-            return GetNextPrime(currentPrime);
+            do
+            {
+                currentPrime++;
+                bool isPrime = IsPrime(currentPrime);
+                if (isPrime) break;
+            } while (true);
+            return currentPrime;
         }
     }
 
