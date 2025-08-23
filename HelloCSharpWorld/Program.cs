@@ -176,7 +176,35 @@ namespace HelloCSharpWorld
         public string Name { get; } = "Prime Factorization GCD Calculator";
 
         // GCD by Prime Factors Function - Asal çarpanlarla EBOB hesaplayan fonksiyon
-        public int CalculateGCD(int x, int y) { return 0; }
+        public int CalculateGCD(int x, int y)
+        {
+            IPrimeProvider primeProvider = new SimplePrimeProvider();
+            int gcdResult = 1;
+            int factorCandidate = 2;
+            // Normalize etme validate
+            while (x != 1 || y != 1)
+            {
+                if (x % factorCandidate == 0 && y % factorCandidate == 0)
+                {
+                    gcdResult *= factorCandidate;
+                    x /= factorCandidate;
+                    y /= factorCandidate;
+                }
+                else if (x % factorCandidate == 0 && y % factorCandidate != 0)
+                {
+                    x /= factorCandidate;
+                }
+                else if (x % factorCandidate != 0 && y % factorCandidate == 0)
+                {
+                    y /= factorCandidate;
+                }
+                else
+                {
+                    factorCandidate = primeProvider.GetNextPrime(factorCandidate);
+                }
+            }
+            return gcdResult;
+        }
 
 
         // Logger - Kayıt fonksiyonu
