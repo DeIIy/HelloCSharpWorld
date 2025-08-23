@@ -173,38 +173,26 @@ namespace HelloCSharpWorld
     public class PrimeFactorizationGCDCalculator : IGCDCalculator
     {
         // Variable holding selection name - Seçimin adını tutan değişken
-        public string Name = "Prime Factorization GCD Calculator";
-
-        string IGCDCalculator.Name => throw new NotImplementedException();
+        public string Name { get; } = "Prime Factorization GCD Calculator";
 
         // GCD by Prime Factors Function - Asal çarpanlarla EBOB hesaplayan fonksiyon
         public int CalculateGCD(int x, int y) { return 0; }
 
-        public List<GcdStep> GetCalculateSteps(int x, int y)
-        {
-            throw new NotImplementedException();
-        }
 
         // Logger - Kayıt fonksiyonu
-        public List<GcdStep> GetCalculationSteps(int x, int y) { return new List<GcdStep>(); }
+        public List<GcdStep> GetCalculateSteps(int x, int y) { return new List<GcdStep>(); }
     }
     // Euclidean GCD Class - Öklidle EBOB hesaplayan sınıf
     public class EuclideanModuloGCDCalculator : IGCDCalculator
     {
         // Variable holding selection name - Seçimin adını tutan değişken
-        public string Name = "Euclidean Modulo GCD Calculator";
-        string IGCDCalculator.Name => throw new NotImplementedException();
+        public string Name { get; } = "Euclidean Modulo GCD Calculator";
 
         // GCD by Euclidean Function - Öklidle EBOB hesaplayan fonksiyon
         public int CalculateGCD(int x, int y) { return 0; }
 
-        public List<GcdStep> GetCalculateSteps(int x, int y)
-        {
-            throw new NotImplementedException();
-        }
-
         // Logger - Kayıt fonksiyonu
-        public List<GcdStep> GetCalculationSteps() { return new List<GcdStep>(); }
+        public List<GcdStep> GetCalculateSteps(int x, int y) { return new List<GcdStep>(); }
     }
     // Console Table Printer Class - Tabloyu Konsola basan sınıf
     public class ConsoleTablePrinter : ITablePrinter
@@ -255,6 +243,23 @@ namespace HelloCSharpWorld
 
             output.PrintIntroMessage();
             var choice = input.GetChoice("Which option would you like to use (1/2): ", "1", "2"); // Hangi seçeneği kullanmak istersiniz (1/2):
+
+            IGCDCalculator calculator;
+            switch (choice)
+            {
+                case "1":
+                    // Option 1: Prime Factorization Method - Seçenek 1: Asal Çarpanlara Ayırma Yöntemi
+                    calculator = new PrimeFactorizationGCDCalculator();
+                    break;
+                case "2":
+                    // Option 2: Euclidean Algorithm - Seçenek 2: Öklid Algoritması
+                    calculator = new EuclideanModuloGCDCalculator();
+                    break;
+                default:
+                    // Default Option: Falls back to Prime Factorization - Varsayılan Seçenek: Asal Çarpanlara Ayırma Yöntemi kullanılır
+                    calculator = new PrimeFactorizationGCDCalculator();
+                    break;
+            }
 
             var x = input.GetInteger("Enter the first number to calculate the GCD..."); // EBOB hesaplamak için ilk sayıyı girin...
             var y = input.GetInteger("Enter the second number to calculate the GCD..."); // EBOB hesaplamak için ikinci sayıyı girin...
