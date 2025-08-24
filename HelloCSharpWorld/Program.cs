@@ -76,7 +76,7 @@ namespace HelloCSharpWorld
     //
     public interface IValidator
     {
-        void EnsureValidInputs(int x, int y);
+        (int? x, int? y) EnsureValidInputs(int x, int y);
     }
 
 
@@ -173,15 +173,20 @@ namespace HelloCSharpWorld
     public class PrimeFactorizationGCDCalculator : IGCDCalculator
     {
         // Variable holding selection name - Seçimin adını tutan değişken
-        public string Name { get; } = "Prime Factorization GCD Calculator";
+        public string Name { get; } = "Prime Factorization GCD Calculator"; // Asal Çarpanlarla EBOB Hesaplayıcı
 
         // GCD by Prime Factors Function - Asal çarpanlarla EBOB hesaplayan fonksiyon
         public int CalculateGCD(int x, int y)
         {
             IPrimeProvider primeProvider = new SimplePrimeProvider();
+            IValidator validator = new BasicInputValidator();
+
+            var (validX, validY) = validator.EnsureValidInputs(x, y);
+            if (validY == null) return (int)validX;
+            x = (int)validX;
+            y = (int)validY;
             int gcdResult = 1;
             int factorCandidate = 2;
-            // Normalize etme validate
             while (x != 1 || y != 1)
             {
                 if (x % factorCandidate == 0 && y % factorCandidate == 0)
@@ -217,7 +222,17 @@ namespace HelloCSharpWorld
         public string Name { get; } = "Euclidean Modulo GCD Calculator";
 
         // GCD by Euclidean Function - Öklidle EBOB hesaplayan fonksiyon
-        public int CalculateGCD(int x, int y) { return 0; }
+        public int CalculateGCD(int x, int y)
+        {
+            IValidator validator = new BasicInputValidator();
+
+            var (validX, validY) = validator.EnsureValidInputs(x, y);
+            if (validY is null) return (int)validX;
+            x = (int)validX;
+            y = (int)validY;
+            //Doldur
+            return 1;
+        }
 
         // Logger - Kayıt fonksiyonu
         public List<GcdStep> GetCalculateSteps(int x, int y) { return new List<GcdStep>(); }
@@ -260,11 +275,23 @@ namespace HelloCSharpWorld
     // Validate Inputs Function - Girdileri doğrulama fonksiyonu
     public class BasicInputValidator : IValidator
     {
-        void EnsureValidInputs(int x, int y) { }
-
-        void IValidator.EnsureValidInputs(int x, int y)
+        private const int MaxThreshold = 10000000;
+        public (int? x, int? y) EnsureValidInputs(int x, int y)
         {
-            EnsureValidInputs(x, y);
+            x = Math.Abs(x);
+            y = Math.Abs(y);
+
+            if (x == 0 && y == 0)
+            {
+                throw new ArgumentException("GCD(0,0) is undefined"); // GCD(0,0) tanımsızdır. 
+            }
+            else if (x == 0 && y != 0) return (y, null);
+            else if (x != 0 && y == 0) return (x, null);
+            if (x > MaxThreshold || y > MaxThreshold)
+            {
+                throw new OverflowException("Input too large for chosen GCD algorithm"); // Seçilen EBOB algoritması için girdi çok büyük 
+            }
+            return (x, y);
         }
     }
 
