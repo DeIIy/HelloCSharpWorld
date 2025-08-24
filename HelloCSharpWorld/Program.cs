@@ -219,7 +219,7 @@ namespace HelloCSharpWorld
     public class EuclideanModuloGCDCalculator : IGCDCalculator
     {
         // Variable holding selection name - Seçimin adını tutan değişken
-        public string Name { get; } = "Euclidean Modulo GCD Calculator";
+        public string Name { get; } = "Euclidean Modulo GCD Calculator"; // Öklid Modülü EBOB Hesaplayıcısı
 
         // GCD by Euclidean Function - Öklidle EBOB hesaplayan fonksiyon
         public int CalculateGCD(int x, int y)
@@ -230,8 +230,14 @@ namespace HelloCSharpWorld
             if (validY is null) return (int)validX;
             x = (int)validX;
             y = (int)validY;
-            //Doldur
-            return 1;
+
+            while (y != 0)
+            {
+                int temp = y;
+                y = x % y;
+                x = temp;
+            }
+            return x;
         }
 
         // Logger - Kayıt fonksiyonu
