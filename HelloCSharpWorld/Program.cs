@@ -179,12 +179,6 @@ namespace HelloCSharpWorld
         public int CalculateGCD(int x, int y)
         {
             IPrimeProvider primeProvider = new SimplePrimeProvider();
-            IValidator validator = new BasicInputValidator();
-
-            var (validX, validY) = validator.EnsureValidInputs(x, y);
-            if (validY == null) return (int)validX;
-            x = (int)validX;
-            y = (int)validY;
             int gcdResult = 1;
             int factorCandidate = 2;
             while (x != 1 || y != 1)
@@ -224,13 +218,6 @@ namespace HelloCSharpWorld
         // GCD by Euclidean Function - Öklidle EBOB hesaplayan fonksiyon
         public int CalculateGCD(int x, int y)
         {
-            IValidator validator = new BasicInputValidator();
-
-            var (validX, validY) = validator.EnsureValidInputs(x, y);
-            if (validY is null) return (int)validX;
-            x = (int)validX;
-            y = (int)validY;
-
             while (y != 0)
             {
                 int temp = y;
@@ -310,6 +297,7 @@ namespace HelloCSharpWorld
         {
             IOutputHandler output = new ConsoleOutputHandler();
             IInputHandler input = new ConsoleInputHandler();
+            IValidator validator = new BasicInputValidator();
 
             output.PrintIntroMessage();
             var choice = input.GetChoice("Which option would you like to use (1/2): ", "1", "2"); // Hangi seçeneği kullanmak istersiniz (1/2):
@@ -333,6 +321,20 @@ namespace HelloCSharpWorld
 
             var x = input.GetInteger("Enter the first number to calculate the GCD..."); // EBOB hesaplamak için ilk sayıyı girin...
             var y = input.GetInteger("Enter the second number to calculate the GCD..."); // EBOB hesaplamak için ikinci sayıyı girin...
+
+            var (validX, validY) = validator.EnsureValidInputs(x, y);
+            if(validY is null)
+            {
+                int gcdResult = (int)validX;
+            }
+            else
+            {
+                x = (int)validX;
+                y = (int)validY;
+                calculator.CalculateGCD(x, y);
+            }
+
+
             Console.ReadLine();
         }
     }
