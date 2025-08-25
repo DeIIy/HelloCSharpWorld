@@ -66,6 +66,11 @@ namespace HelloCSharpWorld
     {
         IGCDCalculator Create(string choice);
     }
+    // Runner Interface - Çalıştırıcı arayüz
+    public interface ICalculationRunner
+    {
+        void Run();
+    }
     // Console Table Output - Tabloyu Konsola basan arayüz
     public interface ITablePrinter
     {
@@ -300,12 +305,51 @@ namespace HelloCSharpWorld
             switch (choice)
             {
                 case "1":
-                    return new PrimeFactorizationGCDCalculator();
+                    return new PrimeFactorizationGCDCalculator(); // Option 1: Prime Factorization Method - Seçenek 1: Asal Çarpanlara Ayırma Yöntemi
                 case "2":
-                    return new EuclideanModuloGCDCalculator();
+                    return new EuclideanModuloGCDCalculator(); // Option 2: Euclidean Algorithm - Seçenek 2: Öklid Algoritması
                 default:
-                    return new PrimeFactorizationGCDCalculator();
+                    return new PrimeFactorizationGCDCalculator(); // Default Option: Falls back to Prime Factorization - Varsayılan Seçenek: Asal Çarpanlara Ayırma Yöntemi kullanılır
             }
+        }
+    }
+    //
+    public class CalculationRunner : ICalculationRunner
+    {
+        private readonly IInputHandler _input;
+        private readonly IOutputHandler _output;
+        private readonly IValidator _validator;
+        private readonly ICalculatorFactory _calculatorFactory;
+
+        public CalculationRunner(IInputHandler input, IOutputHandler output, IValidator validator, ICalculatorFactory calculatorFactory)
+        {
+            _input = input;
+            _output = output;
+            _validator = validator;
+            _calculatorFactory = calculatorFactory;
+        }
+        // Ruling Class - Yönetici Sınıf
+        public void Run()
+        {
+            _output.PrintIntroMessage();
+
+            var choice = _input.GetChoice("Which option would you like to use(1 / 2): ", "1", "2"); // Hangi seçeneği kullanmak istersiniz (1/2):
+            IGCDCalculator calculator = _calculatorFactory.Create(choice);
+
+            var x = _input.GetInteger("Enter the first number to calculate the GCD..."); // EBOB hesaplamak için ilk sayıyı girin...
+            var y = _input.GetInteger("Enter the second number to calculate the GCD..."); // EBOB hesaplamak için ikinci sayıyı girin...
+
+            var validated = _validator.EnsureValidInputs(x, y);
+            var validX = validated.Item1;
+            var validY = validated.Item2;
+
+            int gcdResult;
+            if (validY == null) gcdResult = (int)validX;
+            else gcdResult = calculator.CalculateGCD(validX.Value, validY.Value);
+
+            _output.PrintSeparator();
+            Console.WriteLine("The GCD result is: " + gcdResult);
+            _output.PrintSeparator();
         }
     }
 
@@ -322,43 +366,8 @@ namespace HelloCSharpWorld
             IValidator validator = new BasicInputValidator();
             ICalculatorFactory calculatorFactory = new GcdCalculatorFactory();
 
-            int gcdResult;
-
-            output.PrintIntroMessage();
-            var choice = input.GetChoice("Which option would you like to use (1/2): ", "1", "2"); // Hangi seçeneği kullanmak istersiniz (1/2):
-
-            IGCDCalculator calculator;
-            switch (choice)
-            {
-                case "1":
-                    // Option 1: Prime Factorization Method - Seçenek 1: Asal Çarpanlara Ayırma Yöntemi
-                    calculator = new PrimeFactorizationGCDCalculator();
-                    break;
-                case "2":
-                    // Option 2: Euclidean Algorithm - Seçenek 2: Öklid Algoritması
-                    calculator = new EuclideanModuloGCDCalculator();
-                    break;
-                default:
-                    // Default Option: Falls back to Prime Factorization - Varsayılan Seçenek: Asal Çarpanlara Ayırma Yöntemi kullanılır
-                    calculator = new PrimeFactorizationGCDCalculator();
-                    break;
-            }
-
-            var x = input.GetInteger("Enter the first number to calculate the GCD..."); // EBOB hesaplamak için ilk sayıyı girin...
-            var y = input.GetInteger("Enter the second number to calculate the GCD..."); // EBOB hesaplamak için ikinci sayıyı girin...
-
-            var (validX, validY) = validator.EnsureValidInputs(x, y);
-            if(validY is null)
-            {
-                gcdResult = (int)validX;
-            }
-            else
-            {
-                x = (int)validX;
-                y = (int)validY;
-                gcdResult = calculator.CalculateGCD(x, y);
-            }
-
+            ICalculationRunner runner = new CalculationRunner(input, output, validator, calculatorFactory);
+            runner.Run();
 
             Console.ReadLine();
         }
