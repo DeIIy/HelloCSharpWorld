@@ -61,6 +61,11 @@ namespace HelloCSharpWorld
         // Logger - Kayıt fonksiyonu
         List<GcdStep> GetCalculateSteps(int x, int y);
     }
+    // 
+    public interface ICalculatorFactory
+    {
+        IGCDCalculator Create(string choice);
+    }
     // Console Table Output - Tabloyu Konsola basan arayüz
     public interface ITablePrinter
     {
@@ -179,6 +184,7 @@ namespace HelloCSharpWorld
         public int CalculateGCD(int x, int y)
         {
             IPrimeProvider primeProvider = new SimplePrimeProvider();
+
             int gcdResult = 1;
             int factorCandidate = 2;
             while (x != 1 || y != 1)
@@ -287,6 +293,21 @@ namespace HelloCSharpWorld
             return (x, y);
         }
     }
+    public class GcdCalculatorFactory : ICalculatorFactory
+    {
+        public IGCDCalculator Create(string choice)
+        {
+            switch (choice)
+            {
+                case "1":
+                    return new PrimeFactorizationGCDCalculator();
+                case "2":
+                    return new EuclideanModuloGCDCalculator();
+                default:
+                    return new PrimeFactorizationGCDCalculator();
+            }
+        }
+    }
 
     // ------------------------------
     // MAIN LAYER - ANA BÖLÜM
@@ -298,6 +319,9 @@ namespace HelloCSharpWorld
             IOutputHandler output = new ConsoleOutputHandler();
             IInputHandler input = new ConsoleInputHandler();
             IValidator validator = new BasicInputValidator();
+            ICalculatorFactory calculatorFactory = new GcdCalculatorFactory();
+
+            int gcdResult;
 
             output.PrintIntroMessage();
             var choice = input.GetChoice("Which option would you like to use (1/2): ", "1", "2"); // Hangi seçeneği kullanmak istersiniz (1/2):
@@ -325,13 +349,13 @@ namespace HelloCSharpWorld
             var (validX, validY) = validator.EnsureValidInputs(x, y);
             if(validY is null)
             {
-                int gcdResult = (int)validX;
+                gcdResult = (int)validX;
             }
             else
             {
                 x = (int)validX;
                 y = (int)validY;
-                calculator.CalculateGCD(x, y);
+                gcdResult = calculator.CalculateGCD(x, y);
             }
 
 
