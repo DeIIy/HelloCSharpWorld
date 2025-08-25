@@ -44,7 +44,7 @@ namespace HelloCSharpWorld
         int GetInteger(string message);
         string GetChoice(string message, params string[] allowedChoices);
     }
-
+    // User Output Interface - Kullanıcı çıktısı arayüzü
     public interface IOutputHandler
     {
         void PrintSeparator();
@@ -61,7 +61,7 @@ namespace HelloCSharpWorld
         // Logger - Kayıt fonksiyonu
         List<GcdStep> GetCalculateSteps(int x, int y);
     }
-    // 
+    // Factory Interface - Fabrika arayüzü
     public interface ICalculatorFactory
     {
         IGCDCalculator Create(string choice);
@@ -83,8 +83,6 @@ namespace HelloCSharpWorld
     {
         (int? x, int? y) EnsureValidInputs(int x, int y);
     }
-
-
 
     // ------------------------------
     // CLASS LAYER - SINIF BÖLÜMÜ
@@ -123,6 +121,7 @@ namespace HelloCSharpWorld
                 }
             }
         }
+        //
         public string GetChoice(string message, params string[] allowedChoices)
         {
             var allowed = new HashSet<string>(allowedChoices, StringComparer.OrdinalIgnoreCase);
@@ -293,6 +292,7 @@ namespace HelloCSharpWorld
             return (x, y);
         }
     }
+    // Creates calculator based on choice - Seçime göre hesaplayıcı oluşturur
     public class GcdCalculatorFactory : ICalculatorFactory
     {
         public IGCDCalculator Create(string choice)
@@ -312,6 +312,7 @@ namespace HelloCSharpWorld
     // ------------------------------
     // MAIN LAYER - ANA BÖLÜM
     // ------------------------------
+
     internal class Program
     {
         static void Main(string[] args)
