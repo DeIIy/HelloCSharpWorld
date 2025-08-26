@@ -10,8 +10,35 @@ namespace HelloCSharpWorld
 
 {
     // ------------------------------
+    // ENUM LAYER - SABİT BÖLÜMÜ
+    // ------------------------------
+    public enum ErrorCode
+    {
+        InvalidChoice,
+        EmptyInput,
+        InvalidFormat,
+        OutOfRange,
+        Unexpected
+    }
+    // ------------------------------
     // DOMAIN LAYER - DOMAIN BÖLÜMÜ
     // ------------------------------
+    public class Error
+    {
+        public ErrorCode Code { get; }
+        public string Message { get; }
+
+        public Error(ErrorCode code, string message)
+        {
+            Code = code;
+            Message = message;
+        }
+
+        public override string ToString()
+        {
+            return $"[Error][{Code}]: {Message}";
+        }
+    }
     public class GcdStep
     {
         public int StepNumber { get; set; }
@@ -43,6 +70,7 @@ namespace HelloCSharpWorld
         // Takes integer inputs for GCD - EBOB için tam sayı girdileri alır
         int GetInteger(string message);
         string GetChoice(string message, params string[] allowedChoices);
+        (int x, int y) GetNumberFromUser(string firstMessage, string secondMessage);
     }
     // User Output Interface - Kullanıcı çıktısı arayüzü
     public interface IOutputHandler
@@ -88,6 +116,11 @@ namespace HelloCSharpWorld
     {
         (int? x, int? y) EnsureValidInputs(int x, int y);
     }
+    //
+    public interface IErrorHandler
+    {
+        void HandleError(Error error);
+    }
 
     // ------------------------------
     // CLASS LAYER - SINIF BÖLÜMÜ
@@ -96,6 +129,11 @@ namespace HelloCSharpWorld
     // User Input Class - Kullanıcı girdi sınıfı
     public class ConsoleInputHandler : IInputHandler
     {
+        private readonly IErrorHandler _errorHandler;
+        public ConsoleInputHandler(IErrorHandler errorHandler)
+        {
+            _errorHandler = errorHandler;
+        }
         // User Input Function - Kullanıcı girdi fonksiyonu
         public int GetInteger(string message)
         {
@@ -110,19 +148,19 @@ namespace HelloCSharpWorld
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Invalid number, please try again."); // Geçersiz sayı, lütfen tekrar deneyin.
+                    _errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, "Invalid number, please try again"));
                 }
                 catch (OverflowException)
                 {
-                    Console.WriteLine("Value out of range, enter a smaller or larger number."); // Değer aralık dışında, lütfen daha küçük veya daha büyük bir sayı girin.
+                    _errorHandler.HandleError(new Error(ErrorCode.OutOfRange, "Value out of range, enter a smaller or larger number"));
                 }
                 catch (ArgumentException)
                 {
-                    Console.WriteLine("Input was empty, please enter a number."); // Girdi boş, lütfen bir sayı girin.
+                    _errorHandler.HandleError(new Error(ErrorCode.EmptyInput, "Input was empty, please enter a number."));
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("An unexpected error occurred, please try again."); // Beklenmeyen bir hata oluştu, lütfen tekrar deneyin.
+                    _errorHandler.HandleError(new Error(ErrorCode.Unexpected, "An unexpected error occurred, please try again."));
                 }
             }
         }
@@ -135,8 +173,15 @@ namespace HelloCSharpWorld
                 Console.WriteLine(message);
                 var input = Console.ReadLine();
                 if (!string.IsNullOrEmpty(input) && allowed.Contains(input.Trim())) return input.Trim();
-                Console.WriteLine($"Invalid choice. Options: {string.Join(", ", allowedChoices)}"); // Geçersiz seçim. Seçenekler: 1, 2
+
+                _errorHandler.HandleError(new Error(ErrorCode.InvalidChoice, $"Invalid choice. Options: {string.Join(", ", allowedChoices)}"));
             }
+        }
+        public (int x, int y) GetNumberFromUser(string firstMessage, string secondMessage)
+        {
+            var x = GetInteger(firstMessage);
+            var y = GetInteger(secondMessage);
+            return (x, y);
         }
     }
     // User Output Class - Kullanıcı çıktı sınıfı
@@ -316,17 +361,19 @@ namespace HelloCSharpWorld
     //
     public class CalculationRunner : ICalculationRunner
     {
+        private readonly IErrorHandler _errorHandler;
         private readonly IInputHandler _input;
         private readonly IOutputHandler _output;
         private readonly IValidator _validator;
         private readonly ICalculatorFactory _calculatorFactory;
 
-        public CalculationRunner(IInputHandler input, IOutputHandler output, IValidator validator, ICalculatorFactory calculatorFactory)
+        public CalculationRunner(IInputHandler input, IOutputHandler output, IValidator validator, ICalculatorFactory calculatorFactory, IErrorHandler errorHandler)
         {
             _input = input;
             _output = output;
             _validator = validator;
             _calculatorFactory = calculatorFactory;
+            _errorHandler = errorHandler;
         }
         // Ruling Class - Yönetici Sınıf
         public void Run()
@@ -336,10 +383,34 @@ namespace HelloCSharpWorld
             var choice = _input.GetChoice("Which option would you like to use(1 / 2): ", "1", "2"); // Hangi seçeneği kullanmak istersiniz (1/2):
             IGCDCalculator calculator = _calculatorFactory.Create(choice);
 
-            var x = _input.GetInteger("Enter the first number to calculate the GCD..."); // EBOB hesaplamak için ilk sayıyı girin...
-            var y = _input.GetInteger("Enter the second number to calculate the GCD..."); // EBOB hesaplamak için ikinci sayıyı girin...
+            var (x, y) = _input.GetNumberFromUser("Enter the first number to calculate the GCD...", "Enter the second number to calculate the GCD..."); // EBOB hesaplamak için ilk sayıyı girin... EBOB hesaplamak için ikinci sayıyı girin...
 
-            var validated = _validator.EnsureValidInputs(x, y);
+            (int? validX, int? validY) validated;
+
+            while (true)
+            {
+                try
+                {
+                    validated = _validator.EnsureValidInputs(x, y);
+                    break;
+                }
+                catch (ArgumentException e)
+                {
+                    _errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, e.Message));
+                    (x, y) = _input.GetNumberFromUser("Enter the first number again:", "Enter the second number again:");
+                }
+                catch (OverflowException e)
+                {
+                    _errorHandler.HandleError(new Error(ErrorCode.OutOfRange, e.Message));
+                    (x, y) = _input.GetNumberFromUser("Enter the first number again:", "Enter the second number again:");
+                }
+                catch (Exception e)
+                {
+                    _errorHandler.HandleError(new Error(ErrorCode.Unexpected, e.Message));
+                    (x, y) = _input.GetNumberFromUser("Enter the first number again", "Enter the second number again:");
+                }
+            }
+
             var validX = validated.Item1;
             var validY = validated.Item2;
 
@@ -352,6 +423,15 @@ namespace HelloCSharpWorld
             _output.PrintSeparator();
         }
     }
+    public class ConsoleErrorHandler : IErrorHandler
+    {
+        public void HandleError(Error error)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(error.ToString());
+            Console.ResetColor();
+        }
+    }
 
     // ------------------------------
     // MAIN LAYER - ANA BÖLÜM
@@ -361,12 +441,13 @@ namespace HelloCSharpWorld
     {
         static void Main(string[] args)
         {
+            IErrorHandler errorHandler = new ConsoleErrorHandler();
             IOutputHandler output = new ConsoleOutputHandler();
-            IInputHandler input = new ConsoleInputHandler();
+            IInputHandler input = new ConsoleInputHandler(errorHandler);
             IValidator validator = new BasicInputValidator();
             ICalculatorFactory calculatorFactory = new GcdCalculatorFactory();
 
-            ICalculationRunner runner = new CalculationRunner(input, output, validator, calculatorFactory);
+            ICalculationRunner runner = new CalculationRunner(input, output, validator, calculatorFactory, errorHandler);
             runner.Run();
 
             Console.ReadLine();
