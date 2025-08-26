@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.ConstrainedExecution;
 
 namespace Temeller
@@ -86,6 +87,7 @@ namespace Temeller
         GcdStep StartStep(int stepNumber, int x, int y, int divisor);
         void CompleteStep(GcdStep step, int xAfter, int yAfter, string operation, bool isCommon);
         void GetSteps();
+        void PrintSchoolTable();
     }
     public class SimplePrimeProvider : IPrimeProvider
     {
@@ -250,7 +252,8 @@ namespace Temeller
                 stepCounter++;
             }
 
-            tableBuilder.GetSteps();
+            //tableBuilder.GetSteps();
+            tableBuilder.PrintSchoolTable();
 
             return gcdResult;
         }
@@ -451,7 +454,30 @@ namespace Temeller
                                   $"Bölen: {step.TestedDivisor}, Ortak mı? {step.IsCommonFactor}");
             }
         }
+        public void PrintSchoolTable()
+        {
+            IOutputHandler _output = new ConsoleOutputHandler();
+            _output.PrintSeparator();
+            foreach (var step in _steps)
+            {
+                // Eğer bu adımda X veya Y en az bir kez bölündüyse tabloya yaz
+                bool anyDivided = (step.XBefore != step.XAfter) || (step.YBefore != step.YAfter);
 
+                if (anyDivided)
+                {
+                    Console.WriteLine(
+                        $"{step.XBefore.ToString().PadLeft(4)} " +
+                        $"{step.YBefore.ToString().PadLeft(4)} " +
+                        $"| {step.TestedDivisor}"
+                    );
+                }
+            }
+
+            // Son satır (X=1, Y=1) garanti olsun diye ayrıca yazılır
+            var last = _steps.Last();
+            Console.WriteLine($"{last.XAfter.ToString().PadLeft(4)} {last.YAfter.ToString().PadLeft(4)}");
+            _output.PrintSeparator();
+        }
     }
     internal class Program
     {
