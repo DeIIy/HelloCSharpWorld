@@ -15,15 +15,15 @@ namespace Temeller
     }
     public class GcdStep
     {
-        int StepNumber { get; set; }
-        int XBefore { get; set; }
-        int YAfter { get; set; }
-        string Operation { get; set; } = string.Empty;
-        int? TestedDivisor { get; set; }
-        bool? IsCommonFactor { get; set; }
-        int XAfter { get; set; }
-        int YBefore { get; set; }
-        int? Remainder { get; set; }
+        public int StepNumber { get; set; }
+        public int XBefore { get; set; }
+        public int YAfter { get; set; }
+        public string Operation { get; set; } = string.Empty;
+        public int? TestedDivisor { get; set; }
+        public bool? IsCommonFactor { get; set; }
+        public int XAfter { get; set; }
+        public int YBefore { get; set; }
+        public int? Remainder { get; set; }
     }
     public class Error
     {
@@ -85,7 +85,7 @@ namespace Temeller
         void ClearTable();
         GcdStep StartStep(int stepNumber, int x, int y, int divisor);
         void CompleteStep(GcdStep step, int xAfter, int yAfter, string operation, bool isCommon);
-        List<GcdStep> GetSteps();
+        void GetSteps();
     }
     public class SimplePrimeProvider : IPrimeProvider
     {
@@ -244,12 +244,14 @@ namespace Temeller
                 else
                 {
                     int nextPrime = primeProvider.GetNextPrime(factorCandidate);
-                    tableBuilder.CompleteStep(step, x, y, $"{factorCandidate} asala sayısı hiçbirini bölemiyor -> sonraki asal denenecek: {nextPrime}", false);
+                    tableBuilder.CompleteStep(step, x, y, $"{factorCandidate} asal sayısı hiçbirini bölemiyor -> sonraki asal denenecek: {nextPrime}", false);
+                    factorCandidate = nextPrime;
                 }
                 stepCounter++;
             }
-            var steps = tableBuilder.GetSteps();
-            Console.WriteLine(steps);
+
+            tableBuilder.GetSteps();
+
             return gcdResult;
         }
         public List<GcdStep> GetCalculateSteps(int x, int y)
@@ -408,7 +410,7 @@ namespace Temeller
     }
     public class GCDTableBuilder : ITableBuilder
     {
-        private List<GcdStep> _steps;
+        public List<GcdStep> _steps;
         private int _stepCounter;
         public void CreateNewTable()
         {
@@ -430,13 +432,6 @@ namespace Temeller
         }
         public void CompleteStep(GcdStep step, int xAfter, int yAfter, string operation, bool isCommonFactor)
         {
-            /*
-            step.XAfter = xAfter;
-            step.YAfter = yAfter;
-            step.Operation = operation;
-            step.IsCommonFactor = isCommonFactor;
-            step.Remainder = null;
-            */
             step.XAfter = xAfter;
             step.YAfter = yAfter;
             step.Operation = operation;
@@ -446,9 +441,15 @@ namespace Temeller
             _steps.Add(step);
             _stepCounter++;
         }
-        public List<GcdStep> GetSteps()
+        public void GetSteps()
         {
-            return _steps;
+            foreach (var step in _steps)
+            {
+                Console.WriteLine($"{step.StepNumber}. Adım: {step.Operation} | " +
+                                  $"X: {step.XBefore}->{step.XAfter}, " +
+                                  $"Y: {step.YBefore}->{step.YAfter}, " +
+                                  $"Bölen: {step.TestedDivisor}, Ortak mı? {step.IsCommonFactor}");
+            }
         }
 
     }
