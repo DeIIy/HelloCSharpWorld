@@ -387,21 +387,21 @@ namespace Temeller
     }
     public class PrimeFactorizationTableBuilder : ITableBuilder
     {
-        //CHANGED 3)
-        public List<GcdStep> _steps;
-        public int _stepCounter;
-        //CHANGED 3)
+        private List<GcdStep> _steps;
+        private int _stepCounter;
+
         public void CreateNewTable()
         {
-            //CHANGED 3)
             _steps = new List<GcdStep>();
-            //CHANGED 3)
+            _stepCounter = 1;
         }
         public void ClearTable()
         {
-            //CHANGED 3)
-            _steps.Clear();
-            //CHANGED 3)
+            if (_steps != null)
+            {
+                _steps.Clear();
+            }
+            _stepCounter = 1;
         }
         public GcdStep StartStep(int stepNumber, int x, int y, int divisor)
         {
@@ -439,9 +439,12 @@ namespace Temeller
             IOutputHandler _output = new ConsoleOutputHandler();
             _output.PrintSeparator();
 
-            //CHANGED 3)
-            //Added code
-            //CHANGED 3)
+            if (_steps == null || !_steps.Any())
+            {
+                Console.WriteLine("(No steps were recorded)");
+                _output.PrintSeparator();
+                return;
+            }
 
             foreach (var step in _steps)
             {
@@ -463,23 +466,21 @@ namespace Temeller
     }
     public class EuclideanTableBuilder : ITableBuilder
     {
-        //CHANGED 3)
-        public List<GcdStep> _steps;
-        public int _stepcounter;
-        //CHANGED 3)
+        private List<GcdStep> _steps;
+        private int _stepCounter;
 
         public void CreateNewTable()
         {
-            //CHANGED 3)
             _steps = new List<GcdStep>();
-            _stepcounter = 1;
-            //CHANGED 3)
+            _stepCounter = 1;
         }
         public void ClearTable()
         {
-            //CHANGED 3)
-            _steps.Clear();
-            //CHANGED 3)
+            if (_steps != null)
+            {
+                _steps.Clear();
+            }
+            _stepCounter = 1;
         }
         public GcdStep StartStep(int stepNumber, int x, int y, int divisor)
         {
@@ -500,7 +501,7 @@ namespace Temeller
             step.Remainder = xAfter;
 
             _steps.Add(step);
-            _stepcounter++;
+            _stepCounter++;
         }
         public void GetSteps()
         {
@@ -514,12 +515,16 @@ namespace Temeller
         }
         public void PrintSchoolTable()
         {
-            //CHANGED 3)
-            //Added code
-            //CHANGED 3)
-            //CHANGED 3)
-            Console.WriteLine("=========================================");
-            //CHANGED 3)
+            IOutputHandler _output = new ConsoleOutputHandler();
+            _output.PrintSeparator();
+
+            if (_steps == null || !_steps.Any())
+            {
+                Console.WriteLine("(No steps were recorded)");
+                _output.PrintSeparator();
+                return;
+            }
+
             foreach (var step in _steps)
             {
                 Console.WriteLine(
@@ -528,9 +533,7 @@ namespace Temeller
                     $"| kalan = {step.Remainder}"
                 );
             }
-            //CHANGED 3)
-            Console.WriteLine("=========================================");
-            //CHANGED 3)
+            _output.PrintSeparator();
         }
     }
     internal class Program
