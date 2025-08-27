@@ -92,12 +92,14 @@ namespace Temeller
     {
         public bool IsPrime(int candidatePrime)
         {
+            //CHANGED 2)
             if (candidatePrime < 2) return false;
             for (int i = 2; i < candidatePrime; i++)
             {
                 if (candidatePrime % i == 0) return false;
             }
             return true;
+            //CHANGED 2)
         }
         public int GetNextPrime(int currentPrime)
         {
@@ -214,7 +216,7 @@ namespace Temeller
         public int CalculateGCD(int x, int y)
         {
             IPrimeProvider primeProvider = new SimplePrimeProvider();
-            ITableBuilder tableBuilder = new PrimeFactorizationBuilder();
+            ITableBuilder tableBuilder = new PrimeFactorizationTableBuilder();
 
             tableBuilder.CreateNewTable();
 
@@ -293,6 +295,7 @@ namespace Temeller
         }
         public int GetInteger(string message)
         {
+            //CHANGED 1)
             while (true)
             {
                 Console.WriteLine(message);
@@ -319,6 +322,7 @@ namespace Temeller
                     _errorHandler.HandleError(new Error(ErrorCode.Unexpected, "An unexpected error occurred, please try again."));
                 }
             }
+            //CHANGED 1)
         }
         public string GetChoice(string message, params string[] allowedChoices)
         {
@@ -341,10 +345,8 @@ namespace Temeller
     }
     public class ConsoleOutputHandler : IOutputHandler
     {
-        public void PrintSeparator()
-        {
-            Console.WriteLine("=========================================");
-        }
+        private const string Separator = "=========================================";
+        public void PrintSeparator() => Console.WriteLine(Separator);
         public void PrintIntroMessage()
         {
             Console.Clear();
@@ -371,17 +373,23 @@ namespace Temeller
             Console.ResetColor();
         }
     }
-    public class PrimeFactorizationBuilder : ITableBuilder
+    public class PrimeFactorizationTableBuilder : ITableBuilder
     {
+        //CHANGED 3)
         public List<GcdStep> _steps;
         public int _stepCounter;
+        //CHANGED 3)
         public void CreateNewTable()
         {
+            //CHANGED 3)
             _steps = new List<GcdStep>();
+            //CHANGED 3)
         }
         public void ClearTable()
         {
+            //CHANGED 3)
             _steps.Clear();
+            //CHANGED 3)
         }
         public GcdStep StartStep(int stepNumber, int x, int y, int divisor)
         {
@@ -418,9 +426,13 @@ namespace Temeller
         {
             IOutputHandler _output = new ConsoleOutputHandler();
             _output.PrintSeparator();
+
+            //CHANGED 3)
+            //Added code
+            //CHANGED 3)
+
             foreach (var step in _steps)
             {
-                // Eğer bu adımda X veya Y en az bir kez bölündüyse tabloya yaz
                 bool anyDivided = (step.XBefore != step.XAfter) || (step.YBefore != step.YAfter);
 
                 if (anyDivided)
@@ -432,8 +444,6 @@ namespace Temeller
                     );
                 }
             }
-
-            // Son satır (X=1, Y=1) garanti olsun diye ayrıca yazılır
             var last = _steps.Last();
             Console.WriteLine($"{last.XAfter.ToString().PadLeft(4)} {last.YAfter.ToString().PadLeft(4)}");
             _output.PrintSeparator();
@@ -441,17 +451,23 @@ namespace Temeller
     }
     public class EuclideanTableBuilder : ITableBuilder
     {
+        //CHANGED 3)
         public List<GcdStep> _steps;
         public int _stepcounter;
+        //CHANGED 3)
 
         public void CreateNewTable()
         {
+            //CHANGED 3)
             _steps = new List<GcdStep>();
             _stepcounter = 1;
+            //CHANGED 3)
         }
         public void ClearTable()
         {
+            //CHANGED 3)
             _steps.Clear();
+            //CHANGED 3)
         }
         public GcdStep StartStep(int stepNumber, int x, int y, int divisor)
         {
@@ -486,7 +502,12 @@ namespace Temeller
         }
         public void PrintSchoolTable()
         {
+            //CHANGED 3)
+            //Added code
+            //CHANGED 3)
+            //CHANGED 3)
             Console.WriteLine("=========================================");
+            //CHANGED 3)
             foreach (var step in _steps)
             {
                 Console.WriteLine(
@@ -495,7 +516,9 @@ namespace Temeller
                     $"| kalan = {step.Remainder}"
                 );
             }
+            //CHANGED 3)
             Console.WriteLine("=========================================");
+            //CHANGED 3)
         }
     }
     internal class Program
