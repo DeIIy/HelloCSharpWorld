@@ -92,14 +92,17 @@ namespace Temeller
     {
         public bool IsPrime(int candidatePrime)
         {
-            //CHANGED 2)
             if (candidatePrime < 2) return false;
-            for (int i = 2; i < candidatePrime; i++)
+            if (candidatePrime == 2) return true;
+            if (candidatePrime % 2 == 0) return false;
+
+            int limit = (int)Math.Floor(Math.Sqrt(candidatePrime));
+
+            for (int i = 3; i <= limit; i += 2)
             {
                 if (candidatePrime % i == 0) return false;
             }
             return true;
-            //CHANGED 2)
         }
         public int GetNextPrime(int currentPrime)
         {
