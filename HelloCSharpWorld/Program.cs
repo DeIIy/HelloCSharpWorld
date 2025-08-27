@@ -295,34 +295,43 @@ namespace Temeller
         }
         public int GetInteger(string message)
         {
-            //CHANGED 1)
             while (true)
             {
                 Console.WriteLine(message);
                 var input = Console.ReadLine();
-                try
-                {
-                    if (input is null) throw new ArgumentException(nameof(input));
-                    return int.Parse(input, CultureInfo.InvariantCulture);
-                }
-                catch (FormatException)
-                {
-                    _errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, "Invalid number, please try again"));
-                }
-                catch (OverflowException)
-                {
-                    _errorHandler.HandleError(new Error(ErrorCode.OutOfRange, "Value out of range, enter a smaller or larger number"));
-                }
-                catch (ArgumentException)
+
+                if (string.IsNullOrEmpty(input))
                 {
                     _errorHandler.HandleError(new Error(ErrorCode.EmptyInput, "Input was empty, please enter a number."));
+                    continue;
                 }
-                catch (Exception)
+
+                input = input.Trim();
+                int value;
+
+                try
+                {
+                    if (int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+                    {
+                        return value;
+                    }
+                    else
+                    {
+                        if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                        {
+                            _errorHandler.HandleError(new Error(ErrorCode.OutOfRange, "Value out of range, enter a smaller or larger number"));
+                        }
+                        else
+                        {
+                            _errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, $"'{input}' is not a valid integer"));
+                        }
+                    }
+                }
+                catch (Exception e)
                 {
                     _errorHandler.HandleError(new Error(ErrorCode.Unexpected, "An unexpected error occurred, please try again."));
                 }
             }
-            //CHANGED 1)
         }
         public string GetChoice(string message, params string[] allowedChoices)
         {
