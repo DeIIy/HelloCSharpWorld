@@ -57,7 +57,6 @@ namespace Temeller
     {
         string Name { get; }
         int CalculateGCD(int x, int y);
-        List<GcdStep> GetCalculateSteps(int x, int y);
     }
     public interface ICalculatorFactory
     {
@@ -215,7 +214,7 @@ namespace Temeller
         public int CalculateGCD(int x, int y)
         {
             IPrimeProvider primeProvider = new SimplePrimeProvider();
-            ITableBuilder tableBuilder = new GCDTableBuilder();
+            ITableBuilder tableBuilder = new PrimeFactorizationBuilder();
 
             tableBuilder.CreateNewTable();
 
@@ -257,71 +256,32 @@ namespace Temeller
 
             return gcdResult;
         }
-        public List<GcdStep> GetCalculateSteps(int x, int y)
-        {
-            /*
-            public class GcdStep
-        {
-            int StepNumber { get; set; }
-            int XBefore { get; set; }
-            int YAfter { get; set; }
-            string Operation { get; set; } = string.Empty;
-            int? TestedDivisor { get; set; }
-            bool? IsCommonFactor { get; set; }
-            int XAfter { get; set; }
-            int YBefore { get; set; }
-            int? Remainder { get; set; }
-        }
-            */
-            //GetCalculationSteps(int x, int y) (+)
-
-            //Her factorCandidate denemesinde bir GcdStep üretir: ()
-
-            //TestedDivisor = factorCandidate
-
-            //IsCommonFactor = (x % factorCandidate == 0 && y % factorCandidate == 0)
-
-            //Operation = "Bölen dene / böl / GCD’yi çarp" gibi açıklayıcı metin
-
-            //XBefore, YBefore ve bölündüyse XAfter, YAfter sahaları doldurulur.
-
-            //Basitlik notu: Bu yöntem anlaşılır ve eğitim amaçlıdır; büyük sayılarda performansı, Öklid’e kıyasla düşüktür.
-
-            return new List<GcdStep>();
-        }
     }
     public class EuclideanModuloGCDCalculator : IGCDCalculator
     {
         public string Name { get; } = "Euclidean Modulo GCD Calculator";
         public int CalculateGCD(int x, int y)
         {
+            ITableBuilder tableBuilder = new EuclideanTableBuilder();
+            tableBuilder.CreateNewTable();
+
+            int stepCounter = 1;
+
             while (y != 0)
             {
-                int temp = y;
-                y = x % y;
-                x = temp;
+                int remainder = x % y;
+
+                var step = tableBuilder.StartStep(stepCounter, x, y, y);
+                tableBuilder.CompleteStep(step, remainder, y, $"{x} % {y} = {remainder}", false);
+
+                x = y;
+                y = remainder;
+                stepCounter++;
             }
+
+            tableBuilder.PrintSchoolTable();
+
             return x;
-        }
-        public List<GcdStep> GetCalculateSteps(int x, int y)
-        {
-            //GetCalculationSteps(int x, int y)
-
-            //Her iterasyonda bir GcdStep:
-
-            //Operation = "r = a % b; a ← b; b ← r"
-
-            //Remainder = r
-
-            //XBefore = a(eski), YBefore = b(eski)
-
-            //XAfter = a(yeni), YAfter = b(yeni)
-
-            //TestedDivisor = null, IsCommonFactor = null.
-
-            //Basitlik notu: Mod-tabanlı Öklid, hem yalın hem de çok verimlidir. Eğitimde adımlar sade ve nettir.
-
-            return new List<GcdStep>();
         }
     }
     public class ConsoleInputHandler : IInputHandler
@@ -411,10 +371,10 @@ namespace Temeller
             Console.ResetColor();
         }
     }
-    public class GCDTableBuilder : ITableBuilder
+    public class PrimeFactorizationBuilder : ITableBuilder
     {
         public List<GcdStep> _steps;
-        private int _stepCounter;
+        public int _stepCounter;
         public void CreateNewTable()
         {
             _steps = new List<GcdStep>();
@@ -477,6 +437,65 @@ namespace Temeller
             var last = _steps.Last();
             Console.WriteLine($"{last.XAfter.ToString().PadLeft(4)} {last.YAfter.ToString().PadLeft(4)}");
             _output.PrintSeparator();
+        }
+    }
+    public class EuclideanTableBuilder : ITableBuilder
+    {
+        public List<GcdStep> _steps;
+        public int _stepcounter;
+
+        public void CreateNewTable()
+        {
+            _steps = new List<GcdStep>();
+            _stepcounter = 1;
+        }
+        public void ClearTable()
+        {
+            _steps.Clear();
+        }
+        public GcdStep StartStep(int stepNumber, int x, int y, int divisor)
+        {
+            return new GcdStep
+            {
+                StepNumber = stepNumber,
+                XBefore = x,
+                YBefore = y,
+                TestedDivisor = divisor
+            };
+        }
+        public void CompleteStep(GcdStep step, int xAfter, int yAfter, string operation, bool isCommonFactor)
+        {
+            step.XAfter = xAfter;
+            step.YAfter = yAfter;
+            step.Operation = operation;
+            step.IsCommonFactor = isCommonFactor;
+            step.Remainder = xAfter;
+
+            _steps.Add(step);
+            _stepcounter++;
+        }
+        public void GetSteps()
+        {
+            foreach (var step in _steps)
+            {
+                Console.WriteLine($"{step.StepNumber}. Adım: {step.Operation} | " +
+                                  $"X: {step.XBefore}, " +
+                                  $"Y: {step.YBefore}, " +
+                                  $"Kalan: {step.Remainder}");
+            }
+        }
+        public void PrintSchoolTable()
+        {
+            Console.WriteLine("=========================================");
+            foreach (var step in _steps)
+            {
+                Console.WriteLine(
+                    $"{step.XBefore.ToString().PadLeft(4)} " +
+                    $"{step.YBefore.ToString().PadLeft(4)} " +
+                    $"| kalan = {step.Remainder}"
+                );
+            }
+            Console.WriteLine("=========================================");
         }
     }
     internal class Program
