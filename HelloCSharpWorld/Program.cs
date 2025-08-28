@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.ConstrainedExecution;
 
 namespace Temeller
@@ -153,6 +154,13 @@ namespace Temeller
     }
     public class CalculationRunner : ICalculationRunner
     {
+        private const string RetryFirstMessage = "Enter the first number again";
+        private const string RetrySecondMessage = "Enter the second number again";
+        private const string ChoiceMessage = "Which option would you like to use(1 / 2): ";
+        private const string FirstNumberMessage = "Enter the first number to calculate the GCD...";
+        private const string SecondNumberMessage = "Enter the second number to calculate the GCD...";
+        private const string ResultMessage = "The GCD result is: ";
+
         private readonly IErrorHandler _errorHandler;
         private readonly IInputHandler _input;
         private readonly IOutputHandler _output;
@@ -161,20 +169,20 @@ namespace Temeller
 
         public CalculationRunner(IInputHandler input, IOutputHandler output, IValidator validator, ICalculatorFactory calculatorFactory, IErrorHandler errorHandler)
         {
-            _input = input;
-            _output = output;
-            _validator = validator;
-            _calculatorFactory = calculatorFactory;
-            _errorHandler = errorHandler;
+            _input = input ?? throw new ArgumentNullException(nameof(input));
+            _output = output ?? throw new ArgumentNullException(nameof(output));
+            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+            _calculatorFactory = calculatorFactory ?? throw new ArgumentNullException(nameof(calculatorFactory));
+            _errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
         }
 
         public void Run()
         {
             _output.PrintIntroMessage();
 
-            var choice = _input.GetChoice("Which option would you like to use(1 / 2): ", "1", "2");
+            var choice = _input.GetChoice(ChoiceMessage, "1", "2");
             IGCDCalculator calculator = _calculatorFactory.Create(choice);
-            var (x, y) = _input.GetNumberFromUser("Enter the first number to calculate the GCD...", "Enter the second number to calculate the GCD...");
+            var (x, y) = _input.GetNumberFromUser(FirstNumberMessage, SecondNumberMessage);
             (int? validX, int? validY) validated;
 
             while (true)
@@ -187,17 +195,17 @@ namespace Temeller
                 catch (ArgumentException e)
                 {
                     _errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, e.Message));
-                    (x, y) = _input.GetNumberFromUser("Enter the first number again:", "Enter the second number again:");
+                    (x, y) = _input.GetNumberFromUser(RetryFirstMessage, RetrySecondMessage);
                 }
                 catch (OverflowException e)
                 {
                     _errorHandler.HandleError(new Error(ErrorCode.OutOfRange, e.Message));
-                    (x, y) = _input.GetNumberFromUser("Enter the first number again:", "Enter the second number again:");
+                    (x, y) = _input.GetNumberFromUser(RetryFirstMessage, RetrySecondMessage);
                 }
                 catch (Exception e)
                 {
                     _errorHandler.HandleError(new Error(ErrorCode.Unexpected, e.Message));
-                    (x, y) = _input.GetNumberFromUser("Enter the first number again", "Enter the second number again:");
+                    (x, y) = _input.GetNumberFromUser(RetryFirstMessage, RetrySecondMessage);
                 }
             }
 
@@ -209,7 +217,7 @@ namespace Temeller
             else gcdResult = calculator.CalculateGCD(validX.Value, validY.Value);
 
             _output.PrintSeparator();
-            Console.WriteLine("The GCD result is: " + gcdResult);
+            Console.WriteLine(ResultMessage + gcdResult);
             _output.PrintSeparator();
         }
     }
