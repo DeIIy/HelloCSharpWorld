@@ -13,6 +13,7 @@ namespace Temeller
         EmptyInput,
         InvalidFormat,
         OutOfRange,
+        NullDependency,
         Unexpected
     }
     public class GcdStep
@@ -169,11 +170,31 @@ namespace Temeller
 
         public CalculationRunner(IInputHandler input, IOutputHandler output, IValidator validator, ICalculatorFactory calculatorFactory, IErrorHandler errorHandler)
         {
-            _input = input ?? throw new ArgumentNullException(nameof(input));
-            _output = output ?? throw new ArgumentNullException(nameof(output));
-            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-            _calculatorFactory = calculatorFactory ?? throw new ArgumentNullException(nameof(calculatorFactory));
-            _errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
+
+            var dependencies = new Dictionary<string, object>
+            {
+                { nameof(input), input },
+                { nameof(output), output },
+                { nameof(validator), validator },
+                { nameof(calculatorFactory), calculatorFactory },
+                { nameof(errorHandler), errorHandler }
+            };
+
+            foreach (var dependency in dependencies)
+            {
+                if (dependency.Value == null)
+                {
+                    errorHandler?.HandleError(new Error(ErrorCode.NullDependency, $"{dependency.Key} cannot be null."));
+
+                    throw new InvalidOperationException($"Cannot start Calculation without {dependency.Key}");
+                }
+            }
+
+            _input = input;
+            _output = output;
+            _validator = validator;
+            _calculatorFactory = calculatorFactory;
+            _errorHandler = errorHandler;
         }
 
         public void Run()
