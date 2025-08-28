@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Runtime.ConstrainedExecution;
 
 namespace Temeller
 {
@@ -119,6 +117,7 @@ namespace Temeller
     }
     public class BasicInputValidator : IValidator
     {
+        IErrorHandler errorHandler = new ConsoleErrorHandler();
         private const int MaxThreshold = 10000000;
         public (int? x, int? y) EnsureValidInputs(int x, int y)
         {
@@ -127,12 +126,16 @@ namespace Temeller
 
             if (x == 0 && y == 0)
             {
+                errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, "Both numbers cannot be zero. GCD(0,0) is mathematically undefined."));
+
                 throw new ArgumentException("GCD(0,0) is undefined");
             }
             else if (x == 0 && y != 0) return (y, null);
             else if (x != 0 && y == 0) return (x, null);
             if (x > MaxThreshold || y > MaxThreshold)
             {
+                errorHandler.HandleError(new Error(ErrorCode.OutOfRange, $"One or both numbers exceed the allowed maximum ({MaxThreshold}). Please try with smaller numbers."));
+
                 throw new OverflowException("Input too large for chosen GCD algorithm");
             }
             return (x, y);
@@ -184,7 +187,7 @@ namespace Temeller
             {
                 if (dependency.Value == null)
                 {
-                    errorHandler?.HandleError(new Error(ErrorCode.NullDependency, $"{dependency.Key} cannot be null."));
+                    errorHandler.HandleError(new Error(ErrorCode.NullDependency, $"{dependency.Key} cannot be null."));
 
                     throw new InvalidOperationException($"Cannot start Calculation without {dependency.Key}");
                 }
@@ -329,34 +332,31 @@ namespace Temeller
         {
             while (true)
             {
-                Console.WriteLine(message);
-                var input = Console.ReadLine();
-
-                if (string.IsNullOrEmpty(input))
-                {
-                    _errorHandler.HandleError(new Error(ErrorCode.EmptyInput, "Input was empty, please enter a number."));
-                    continue;
-                }
-
-                input = input.Trim();
-                int value;
-
                 try
                 {
+                    Console.WriteLine(message);
+                    var input = Console.ReadLine();
+
+                    if (string.IsNullOrEmpty(input))
+                    {
+                        _errorHandler.HandleError(new Error(ErrorCode.EmptyInput, "Input was empty, please enter a number."));
+                        continue;
+                    }
+
+                    input = input.Trim();
+                    int value;
+
                     if (int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
                     {
                         return value;
                     }
+                    if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                    {
+                        _errorHandler.HandleError(new Error(ErrorCode.OutOfRange, "Value out of range, enter a smaller or larger number"));
+                    }
                     else
                     {
-                        if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
-                        {
-                            _errorHandler.HandleError(new Error(ErrorCode.OutOfRange, "Value out of range, enter a smaller or larger number"));
-                        }
-                        else
-                        {
-                            _errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, $"'{input}' is not a valid integer"));
-                        }
+                        _errorHandler.HandleError(new Error(ErrorCode.InvalidFormat, $"'{input}' is not a valid integer"));
                     }
                 }
                 catch (Exception e)
@@ -513,6 +513,10 @@ namespace Temeller
         }
         public GcdStep StartStep(int stepNumber, int x, int y, int divisor)
         {
+            if(_steps == null)
+            {
+                _steps = new List<GcdStep>();
+            }
             return new GcdStep
             {
                 StepNumber = stepNumber,
@@ -523,6 +527,10 @@ namespace Temeller
         }
         public void CompleteStep(GcdStep step, int xAfter, int yAfter, string operation, bool isCommonFactor)
         {
+            if (_steps == null)
+            {
+                _steps = new List<GcdStep>();
+            }
             step.XAfter = xAfter;
             step.YAfter = yAfter;
             step.Operation = operation;
@@ -559,7 +567,7 @@ namespace Temeller
                 Console.WriteLine(
                     $"{step.XBefore.ToString().PadLeft(4)} " +
                     $"{step.YBefore.ToString().PadLeft(4)} " +
-                    $"| kalan = {step.Remainder}"
+                    $"| remainder = {step.Remainder}"
                 );
             }
             _output.PrintSeparator();
