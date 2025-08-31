@@ -78,6 +78,10 @@ namespace Temeller
         string GetChoice(string message, params string[] allowedChoices);
         (int x, int y) GetNumberFromUser(string firstMessage, string secondMessage);
     }
+    /// <summary>
+    ///     TR: Konsol üzerinden kullanıcı bilgilendirmesi veren arayüz.
+    ///     EN: Interface that provides user information via console.
+    /// </summary>
     public interface IOutputHandler
     {
         void PrintSeparator();
