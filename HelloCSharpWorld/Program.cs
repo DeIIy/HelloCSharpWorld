@@ -288,7 +288,6 @@ namespace Temeller
                 stepCounter++;
             }
 
-            //tableBuilder.GetSteps();
             tableBuilder.PrintSchoolTable();
 
             return gcdResult;
