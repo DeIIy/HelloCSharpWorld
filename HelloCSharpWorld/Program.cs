@@ -5,6 +5,15 @@ using System.Linq;
 
 namespace Temeller
 {
+    /// <summary>
+    ///     TR: Uygulama boyunca kullanılacak: 'ArgumentOutOfRangeException,
+    ///         ArgumentNullException, FormatException, OverflowException, 
+    ///         NullReferenceExpection, Exception' hataları temsil eden enum
+    ///         sabitleri.
+    ///     EN: Exceptions to be used throughout the application: 'OverflowException,
+    ///         ArgumentOutOfRangeException, ArgumentNullException, FormatException,
+    ///         NullReferenceException, Exception' enumerated constants.
+    /// </summary>
     public enum ErrorCode
     {
         InvalidChoice,
@@ -14,6 +23,17 @@ namespace Temeller
         NullDependency,
         Unexpected
     }
+    /// <summary>
+    ///     TR: EBOB hesaplamasındaki (asal çarpan ve öklid hesaplamalarıyla)
+    ///         işlem değerlerini (basamak numarası, önceki sayı değerleri, 
+    ///         sonraki sayı değerleri, kısa açıklamalar, asal çarpan veya
+    ///         öklide özel değerler) saklayan işlem basamakları sınıfı.
+    ///     EN: A class that stores the computation steps of the GCD 
+    ///         calculation (using prime factorization and Euclidean methods),
+    ///         including step number, previous values, next values, short
+    ///         descriptions, and special values specific to prime factorization
+    ///         or the Euclidean algorithm.
+    /// </summary>
     public class GcdStep
     {
         public int StepNumber { get; set; }
