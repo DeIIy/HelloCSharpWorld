@@ -46,6 +46,12 @@ namespace Temeller
         public int YBefore { get; set; }
         public int? Remainder { get; set; }
     }
+    /// <summary>
+    ///     TR: Hata bilgilerini kapsülleyen hata kodu ve açıklayıcı hata 
+    ///         mesajı dönen sınıf.
+    ///     EN: A class that encapsulates error information and returns an 
+    ///         error code with a descriptive error message.
+    /// </summary>
     public class Error
     {
         public ErrorCode Code { get; }
