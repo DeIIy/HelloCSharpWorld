@@ -100,6 +100,12 @@ namespace Temeller
         string Name { get; }
         int CalculateGCD(int x, int y);
     }
+    /// <summary>
+    ///     TR: En büyük ortak bölen bulma algoritmasının seçiminde 
+    ///         yararlanılan arayüz.
+    ///     EN: The interface used in selecting the greatest common divisor
+    ///         (GCD) algortihm.
+    /// </summary>
     public interface ICalculatorFactory
     {
         IGCDCalculator Create(string choice);
