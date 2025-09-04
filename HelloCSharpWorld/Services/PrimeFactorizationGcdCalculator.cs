@@ -1,4 +1,5 @@
-﻿using HelloCSharpWorld.Core;
+﻿using HelloCSharpWorld.Builders;
+using HelloCSharpWorld.Core;
 using HelloCSharpWorld.Interfaces;
 
 namespace HelloCSharpWorld.Services
@@ -10,7 +11,7 @@ namespace HelloCSharpWorld.Services
         public int CalculateGcd(int x, int y)
         {
             IPrimeProvider primeProvider = new SimplePrimeProvider();
-            ITableBuilder builder = new PrimeFactorizationTableBuilder();
+            ITableBuilder builder = new BaseTableBuilder();
             ITablePrinter printer = new PrimeFactorizationTablePrinter();
 
             builder.CreateNew();
