@@ -5,8 +5,20 @@ using HelloCSharpWorld.Interfaces;
 
 namespace HelloCSharpWorld.Printers
 {
+    /// <summary>
+    ///     TR: Öklid algoritması adımlarını tablo formatında yazdırmak için kullanılan sınıf.
+    ///     EN: Class used to print the steps of the Euclidean algorithm in a table format.
+    /// </summary>
     public sealed class EuclideanTablePrinter : ITablePrinter
     {
+        /// <summary>
+        ///     TR: Verilen EBOB adımlarını tablo olarak yazdırır.
+        ///     EN: Prints the provided GCD steps as a table.
+        /// </summary>
+        /// <param name="steps">
+        ///     TR: Yazdırılacak EBOB adımlarının okunabilir listesi.
+        ///     EN: Read-only list of GCD steps to print.
+        /// </param>
         public void Print(IReadOnlyList<GcdStep> steps)
         {
             IOutputHandler output = new UI.ConsoleOutputHandler();
