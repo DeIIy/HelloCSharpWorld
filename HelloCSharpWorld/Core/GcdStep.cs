@@ -1,5 +1,16 @@
 ﻿namespace HelloCSharpWorld.Core
 {
+    /// <summary>
+    ///     TR: EBOB hesaplamasındaki (asal çarpan ve öklid hesaplamalarıyla)
+    ///         işlem değerlerini (basamak numarası, önceki sayı değerleri, 
+    ///         sonraki sayı değerleri, kısa açıklamalar, asal çarpan veya
+    ///         öklide özel değerler) saklayan işlem basamakları sınıfı.
+    ///     EN: A class that stores the computation steps of the GCD 
+    ///         calculation (using prime factorization and Euclidean methods),
+    ///         including step number, previous values, next values, short
+    ///         descriptions, and special values specific to prime factorization
+    ///         or the Euclidean algorithm.
+    /// </summary>
     public sealed class GcdStep
     {
         public int StepNumber { get; }
