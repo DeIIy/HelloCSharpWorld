@@ -43,9 +43,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Error.cs" />
+    <Compile Include="Core\ErrorCode.cs" />
+    <Compile Include="Core\GcdStep.cs" />
+    <Compile Include="Core\ValidationException.cs" />
+    <Compile Include="Interfaces\ICalculationRunner.cs" />
+    <Compile Include="Interfaces\ICalculatorFactory.cs" />
+    <Compile Include="Interfaces\IErrorHandler.cs" />
+    <Compile Include="Interfaces\IGcdCalculator.cs" />
+    <Compile Include="Interfaces\IInputHandler.cs" />
+    <Compile Include="Interfaces\IOutputHandler.cs" />
+    <Compile Include="Interfaces\IPrimeProvider.cs" />
+    <Compile Include="Interfaces\ITableBuilder.cs" />
+    <Compile Include="Interfaces\ITablePrinter.cs" />
+    <Compile Include="Interfaces\IValidator.cs" />
     <Compile Include="Old_Code.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BasicInputValidator.cs" />
+    <Compile Include="Services\SimplePrimeProvider.cs" />
+    <Compile Include="UI\ConsoleErrorHandler.cs" />
+    <Compile Include="UI\ConsoleInputHandler.cs" />
+    <Compile Include="UI\ConsoleOutputHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
