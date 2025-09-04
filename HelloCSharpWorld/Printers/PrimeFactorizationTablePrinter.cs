@@ -5,8 +5,16 @@ using HelloCSharpWorld.Interfaces;
 
 namespace HelloCSharpWorld.Printers
 {
+    /// <summary>
+    ///     TR: Asal çarpan yöntemiyle yapılan EBOB hesaplama adımlarını tablo formatında yazdırmak için kullanılan sınıf.
+    ///     EN: Class used to print the steps of GCD calculation using the prime factorization method in a table format.
+    /// </summary>
     internal class PrimeFactorizationTablePrinter : ITablePrinter
     {
+        /// <summary>
+        ///     TR: Verilen EBOB adımlarını tablo olarak yazdırır.
+        ///     EN: Prints the provided GCD steps as a table.
+        /// </summary>
         public void Print(IReadOnlyList<GcdStep> steps)
         {
             IOutputHandler output = new UI.ConsoleOutputHandler();
