@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builders\BaseTableBuilder.cs" />
     <Compile Include="Core\Error.cs" />
     <Compile Include="Core\ErrorCode.cs" />
     <Compile Include="Core\GcdStep.cs" />
+    <Compile Include="Core\Messages.cs" />
     <Compile Include="Core\ValidationException.cs" />
     <Compile Include="Interfaces\ICalculationRunner.cs" />
     <Compile Include="Interfaces\ICalculatorFactory.cs" />
@@ -58,9 +60,15 @@
     <Compile Include="Interfaces\ITablePrinter.cs" />
     <Compile Include="Interfaces\IValidator.cs" />
     <Compile Include="Old_Code.cs" />
+    <Compile Include="Printers\EuclideanTablePrinter.cs" />
+    <Compile Include="Printers\PrimeFactorizationTablePrinter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BasicInputValidator.cs" />
+    <Compile Include="Services\CalculationRunner.cs" />
+    <Compile Include="Services\EuclideanModuloGcdCalculator.cs" />
+    <Compile Include="Services\GcdCalculatorFactory.cs" />
+    <Compile Include="Services\PrimeFactorizationGcdCalculator.cs" />
     <Compile Include="Services\SimplePrimeProvider.cs" />
     <Compile Include="UI\ConsoleErrorHandler.cs" />
     <Compile Include="UI\ConsoleInputHandler.cs" />
@@ -69,5 +77,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
