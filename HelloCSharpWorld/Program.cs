@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HelloCSharpWorld.Interfaces;
+using HelloCSharpWorld.Services;
+using HelloCSharpWorld.UI;
 
 namespace HelloCSharpWorld
 {
@@ -10,6 +9,14 @@ namespace HelloCSharpWorld
     {
         static void Main(string[] args)
         {
+            IErrorHandler errorHandler = new ConsoleErrorHandler();
+            IOutputHandler output = new ConsoleOutputHandler();
+            IInputHandler input = new ConsoleInputHandler(errorHandler);
+            IValidator validator = new BasicInputValidator();
+            ICalculatorFactory factory = new GcdCalculatorFactory();
+            ICalculationRunner runner = new CalculationRunner(input, output, validator, factory, errorHandler);
+
+            runner.Run();
             Console.ReadLine();
         }
     }
