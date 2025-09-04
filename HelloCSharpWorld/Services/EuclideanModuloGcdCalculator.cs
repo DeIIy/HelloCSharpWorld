@@ -1,4 +1,5 @@
-﻿using HelloCSharpWorld.Core;
+﻿using HelloCSharpWorld.Builders;
+using HelloCSharpWorld.Core;
 using HelloCSharpWorld.Interfaces;
 
 namespace HelloCSharpWorld.Services
@@ -9,7 +10,7 @@ namespace HelloCSharpWorld.Services
 
         public int CalculateGcd(int x, int y)
         {
-            ITableBuilder builder = new EuclideanTableBuilder();
+            ITableBuilder builder = new BaseTableBuilder();
             ITablePrinter printer = new EuclideanTablePrinter();
 
             builder.CreateNew();
