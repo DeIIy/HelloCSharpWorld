@@ -5,8 +5,22 @@ using HelloCSharpWorld.UI;
 
 namespace HelloCSharpWorld
 {
+    /// <summary>
+    ///     TR: Programın giriş noktasını temsil eden sınıf.
+    ///     EN: Class representing the entry point of the program.
+    /// </summary>
     internal class Program
     {
+        /// <summary>
+        ///     TR: Programın başlangıç metodudur; gerekli bileşenleri başlatır
+        ///         ve hesaplama sürecini çalıştırır.
+        ///     EN: Main entry method of the program; initializes required 
+        ///         components and runs the calculation process.
+        /// </summary>
+        /// <param name="args">
+        ///     TR: Komut satırından alınan parametreler.
+        ///     EN: Parameters received from the command line.
+        /// </param>
         static void Main(string[] args)
         {
             IErrorHandler errorHandler = new ConsoleErrorHandler();
