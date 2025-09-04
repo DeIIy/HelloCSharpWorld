@@ -1,5 +1,9 @@
 ﻿namespace HelloCSharpWorld.Interfaces
 {
+    /// <summary>
+    ///     TR: Konsol üzerinden kullanıcı girişi alan arayüz.
+    ///     EN: Interface that receives user input via console
+    /// </summary>
     public interface IInputHandler
     {
         int GetInteger(string message);
